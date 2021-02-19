@@ -12,6 +12,9 @@ using Passionproject.Models;
 
 namespace Passionproject.Controllers
 {
+    /// <summary>
+    /// Test
+    /// </summary>
     public class CompsController : ApiController
     {
         private WowDbContext db = new WowDbContext();
