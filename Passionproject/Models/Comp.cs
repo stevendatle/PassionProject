@@ -30,6 +30,7 @@ namespace Passionproject.Models
 
     public class CompDto
     {
+        [Key]
         public int CompID { get; set; }
 
         [DisplayName("Comp Name")]

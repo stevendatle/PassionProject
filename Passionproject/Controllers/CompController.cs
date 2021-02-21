@@ -17,7 +17,7 @@ namespace Passionproject.Controllers
         //using HTTP Client to connect to web api
         private JavaScriptSerializer jss = new JavaScriptSerializer();
         private static readonly HttpClient client;
-        
+
         static CompController()
         {
             HttpClientHandler handler = new HttpClientHandler()
@@ -39,7 +39,7 @@ namespace Passionproject.Controllers
             HttpResponseMessage response = client.GetAsync(url).Result;
             if (response.IsSuccessStatusCode)
             {
-                IEnumerable<CompDto> SelectedComps = response.Content.ReadAsAsync<IEnumerable<CompDto>>().Result;
+                IEnumerable<Comp> SelectedComps = response.Content.ReadAsAsync<IEnumerable<Comp>>().Result;
                 return View(SelectedComps);
             }
             else
@@ -48,9 +48,21 @@ namespace Passionproject.Controllers
             }
         }
 
+
         // GET: Comp/Details/5
         public ActionResult Details(int id)
         {
+            // ShowComp ViewModel = new ShowComp();
+            string url = "compdata/findcomp/" + id;
+            HttpResponseMessage response = client.GetAsync(url).Result;
+            //Catch the status code
+            if (response.IsSuccessStatusCode)
+            {
+                //add data into comp data transfer object
+                CompDto SelectedComp = response.Content.ReadAsAsync<CompDto>().Result;
+                //  ViewModel.comp = SelectedComp;
+                url = "teamdata/getclassesforcomp/" + id;
+            }
             return View();
         }
 
@@ -62,62 +74,108 @@ namespace Passionproject.Controllers
 
         // POST: Comp/Create
         [HttpPost]
-        public ActionResult Create(FormCollection collection)
+        [ValidateAntiForgeryToken()]
+        public ActionResult Create(Comp CompInfo)
         {
-            try
-            {
-                // TODO: Add insert logic here
+            Debug.WriteLine(CompInfo.CompName);
+            string url = "Compdata/addComp";
+            Debug.WriteLine(jss.Serialize(CompInfo));
+            HttpContent content = new StringContent(jss.Serialize(CompInfo));
+            content.Headers.ContentType = new MediaTypeHeaderValue("application/json");
+            HttpResponseMessage response = client.PostAsync(url, content).Result;
 
-                return RedirectToAction("Index");
-            }
-            catch
+            if (response.IsSuccessStatusCode)
             {
-                return View();
+                int Compid = response.Content.ReadAsAsync<int>().Result;
+                return RedirectToAction("Details", new { id = Compid });
+            }
+            else
+            {
+                return RedirectToAction("Error");
             }
         }
 
         // GET: Comp/Edit/5
         public ActionResult Edit(int id)
         {
-            return View();
+            string url = "compdata/findcomp/" + id;
+            HttpResponseMessage response = client.GetAsync(url).Result;
+
+            if (response.IsSuccessStatusCode)
+            {
+                //Put data into comp DTO
+                CompDto SelectedComp = response.Content.ReadAsAsync<CompDto>().Result;
+                return View(SelectedComp);
+            }
+            else
+            {
+                return RedirectToAction("Error");
+            }
         }
 
         // POST: Comp/Edit/5
         [HttpPost]
-        public ActionResult Edit(int id, FormCollection collection)
+        [ValidateAntiForgeryToken()]
+        public ActionResult Edit(int id, Comp CompInfo)
         {
-            try
-            {
-                // TODO: Add update logic here
+            Debug.WriteLine(CompInfo.CompName);
+            string url = "compdata/updatecomp/" + id;
+            Debug.WriteLine(jss.Serialize(CompInfo));
+            HttpContent content = new StringContent(jss.Serialize(CompInfo));
+            content.Headers.ContentType = new MediaTypeHeaderValue("application/json");
+            HttpResponseMessage response = client.PostAsync(url, content).Result;
 
-                return RedirectToAction("Index");
-            }
-            catch
+            if (response.IsSuccessStatusCode)
             {
-                return View();
+                return RedirectToAction("Details", new { id = id });
+            }
+            else
+            {
+                return RedirectToAction("Error");
             }
         }
 
         // GET: Comp/Delete/5
-        public ActionResult Delete(int id)
+        public ActionResult DeleteConfirm(int id)
         {
-            return View();
+            string url = "compdata/findcomp/" + id;
+            HttpResponseMessage response = client.GetAsync(url).Result;
+
+            if (response.IsSuccessStatusCode)
+            {
+                //Put data into comp dto
+                CompDto SelectedComp = response.Content.ReadAsAsync<CompDto>().Result;
+                return View(SelectedComp);
+            }
+            else
+            {
+                return RedirectToAction("Error");
+            }
+
         }
 
         // POST: Comp/Delete/5
         [HttpPost]
-        public ActionResult Delete(int id, FormCollection collection)
+        [ValidateAntiForgeryToken()]
+        public ActionResult Delete(int id)
         {
-            try
-            {
-                // TODO: Add delete logic here
+            string url = "compdata/deletecomp/" + id;
+            HttpContent content = new StringContent("");
+            HttpResponseMessage response = client.PostAsync(url, content).Result;
 
-                return RedirectToAction("Index");
-            }
-            catch
+            if (response.IsSuccessStatusCode)
             {
-                return View();
+                return RedirectToAction("List");
             }
+            else
+            {
+                return RedirectToAction("Error");
+            }
+        }
+
+        public ActionResult Error()
+        {
+            return View();
         }
     }
 }

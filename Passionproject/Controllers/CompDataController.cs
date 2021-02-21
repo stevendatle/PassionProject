@@ -48,21 +48,90 @@ namespace Passionproject.Controllers
             return Ok(CompDtos);
         }
 
-        // PUT: api/Comps/5
+        /// <summary>
+        /// Get a list of classes in the database 
+        /// </summary>
+        /// <param name="id"></param>
+        /// <returns>List of classes associated with the team</returns>
+        /// 
+
+        [ResponseType(typeof(IEnumerable<ClassDto>))]
+        public IHttpActionResult GetClassesForComp(int id)
+        {
+            List<Class> Classes = db.Classes.Where(p => p.CompID == id).ToList();
+            List<ClassDto> ClassDtos = new List<ClassDto> { };
+
+            //choosing information exposed to API
+            foreach (var Class in Classes)
+            {
+                ClassDto NewClass = new ClassDto
+                {
+                    ClassID = Class.ClassID,
+                    ClassName = Class.ClassName,
+                    ClassSpec = Class.ClassSpec,
+                    ClassPic = Class.ClassPic
+                };
+                ClassDtos.Add(NewClass);
+            }
+            return Ok(ClassDtos);
+        }
+
+        /// <summary>
+        /// Find a comp in the database using ID
+        /// </summary>
+        /// <param name="id"></param
+        /// <returns>Information about the comp</returns>
+        /// 
+
+        [HttpGet]
+        [ResponseType(typeof(CompDto))]
+        public IHttpActionResult FindComp(int id)
+        {
+            //Finding the data
+            Comp Comp = db.Comps.Find(id);
+            //if not found return 404
+            if (Comp == null)
+            {
+                return NotFound();
+            }
+
+            //put into dto
+            CompDto CompDto = new CompDto
+            {
+                CompID = Comp.CompID,
+                CompName = Comp.CompName,
+                CompClass1 = Comp.CompClass1,
+                CompClass2 = Comp.CompClass2,
+                CompClass3 = Comp.CompClass3
+            };
+
+            //pass along data
+            return Ok(CompDto);
+        }
+
+        /// <summary>
+        /// Update a Comp in the database given information about the comp
+        /// </summary>
+        /// <param name="id">Comp ID</param>
+        /// <param name="comp">Comp object, received as POST data</param>
+        /// <returns></returns>
+        
+
         [ResponseType(typeof(void))]
-        public IHttpActionResult PutComp(int id, Comp comp)
+        [HttpPost]
+        public IHttpActionResult UpdateComp(int id, [FromBody] Comp Comp)
         {
             if (!ModelState.IsValid)
             {
                 return BadRequest(ModelState);
             }
 
-            if (id != comp.CompID)
+            if (id != Comp.CompID)
             {
                 return BadRequest();
             }
 
-            db.Entry(comp).State = EntityState.Modified;
+            db.Entry(Comp).State = EntityState.Modified;
 
             try
             {
@@ -83,35 +152,45 @@ namespace Passionproject.Controllers
             return StatusCode(HttpStatusCode.NoContent);
         }
 
+        /// <summary>
+        /// Add a comp to the database
+        /// </summary>
+        /// <param name="comp">Comp object</param>
+        /// <returns></returns>
         // POST: api/Comps
         [ResponseType(typeof(Comp))]
-        public IHttpActionResult PostComp(Comp comp)
+        public IHttpActionResult AddComp([FromBody]Comp Comp)
         {
             if (!ModelState.IsValid)
             {
                 return BadRequest(ModelState);
             }
 
-            db.Comps.Add(comp);
+            db.Comps.Add(Comp);
             db.SaveChanges();
 
-            return CreatedAtRoute("DefaultApi", new { id = comp.CompID }, comp);
+            return Ok(Comp.CompID);
         }
 
+        /// <summary>
+        /// Delete a comp
+        /// </summary>
+        /// <param name="id"></param>
+        /// <returns></returns>
         // DELETE: api/Comps/5
         [ResponseType(typeof(Comp))]
         public IHttpActionResult DeleteComp(int id)
         {
-            Comp comp = db.Comps.Find(id);
-            if (comp == null)
+            Comp Comp = db.Comps.Find(id);
+            if (Comp == null)
             {
                 return NotFound();
             }
 
-            db.Comps.Remove(comp);
+            db.Comps.Remove(Comp);
             db.SaveChanges();
 
-            return Ok(comp);
+            return Ok(Comp);
         }
 
         protected override void Dispose(bool disposing)
