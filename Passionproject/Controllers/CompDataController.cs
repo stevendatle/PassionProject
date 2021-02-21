@@ -9,33 +9,43 @@ using System.Net.Http;
 using System.Web.Http;
 using System.Web.Http.Description;
 using Passionproject.Models;
+using System.Diagnostics;
 
 namespace Passionproject.Controllers
 {
     /// <summary>
-    /// Test
+    
     /// </summary>
-    public class CompsController : ApiController
+    public class CompDataController : ApiController
     {
+        //Database access point
         private WowDbContext db = new WowDbContext();
 
-        // GET: api/Comps
-        public IQueryable<Comp> GetComps()
+        /// <summary>
+        /// Get a list of comps in the database
+        /// </summary>
+        /// <returns>List of comps including their id, name, and classes</returns>
+        [ResponseType(typeof(IEnumerable<CompDto>))]
+        public IHttpActionResult GetComps()
         {
-            return db.Comps;
-        }
+            List<Comp> Comps = db.Comps.ToList();
+            List<CompDto> CompDtos = new List<CompDto> { };
 
-        // GET: api/Comps/5
-        [ResponseType(typeof(Comp))]
-        public IHttpActionResult GetComp(int id)
-        {
-            Comp comp = db.Comps.Find(id);
-            if (comp == null)
+            //Choosing the information exposed to the API
+            foreach (var Comp in Comps)
             {
-                return NotFound();
+                CompDto NewComp = new CompDto
+                {
+                    CompID = Comp.CompID,
+                    CompName = Comp.CompName,
+                    CompClass1 = Comp.CompClass1,
+                    CompClass2 = Comp.CompClass2,
+                    CompClass3 = Comp.CompClass3
+                };
+                CompDtos.Add(NewComp);
             }
 
-            return Ok(comp);
+            return Ok(CompDtos);
         }
 
         // PUT: api/Comps/5
