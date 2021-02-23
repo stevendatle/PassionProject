@@ -12,7 +12,6 @@ namespace Passionproject.Models
     public class Class
     {
         [Key]
-
         public int ClassID { get; set; }
 
         public string ClassName { get; set; }
@@ -24,9 +23,6 @@ namespace Passionproject.Models
         public string PicExtension { get; set; }
 
         //A class can play for multiple comps
-
-        [ForeignKey("Comp")]
-        public int CompID { get; set; }
 
         public virtual Comp Comp { get; set; }
 

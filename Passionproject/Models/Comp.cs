@@ -11,7 +11,7 @@ namespace Passionproject.Models
 
     public class Comp
     {
-
+        [Key]
         public int CompID { get; set; }
 
         public string CompName { get; set; }

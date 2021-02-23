@@ -25,7 +25,7 @@ namespace Passionproject.Controllers
         /// Get a list of comps in the database
         /// </summary>
         /// <returns>List of comps including their id, name, and classes</returns>
-        [ResponseType(typeof(IEnumerable<CompDto>))]
+        [ResponseType(typeof(IEnumerable<Comp>))]
         public IHttpActionResult GetComps()
         {
             List<Comp> Comps = db.Comps.ToList();
@@ -55,10 +55,10 @@ namespace Passionproject.Controllers
         /// <returns>List of classes associated with the team</returns>
         /// 
 
-        [ResponseType(typeof(IEnumerable<ClassDto>))]
+        [ResponseType(typeof(IEnumerable<Class>))]
         public IHttpActionResult GetClassesForComp(int id)
         {
-            List<Class> Classes = db.Classes.Where(p => p.CompID == id).ToList();
+            List<Class> Classes = db.Classes.Where(p => p.Comp.CompID == id).ToList();
             List<ClassDto> ClassDtos = new List<ClassDto> { };
 
             //choosing information exposed to API

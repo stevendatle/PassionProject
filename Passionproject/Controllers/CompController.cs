@@ -59,7 +59,7 @@ namespace Passionproject.Controllers
             if (response.IsSuccessStatusCode)
             {
                 //add data into comp data transfer object
-                CompDto SelectedComp = response.Content.ReadAsAsync<CompDto>().Result;
+                Comp SelectedComp = response.Content.ReadAsAsync<Comp>().Result;
                 //  ViewModel.comp = SelectedComp;
                 url = "teamdata/getclassesforcomp/" + id;
             }
@@ -104,7 +104,7 @@ namespace Passionproject.Controllers
             if (response.IsSuccessStatusCode)
             {
                 //Put data into comp DTO
-                CompDto SelectedComp = response.Content.ReadAsAsync<CompDto>().Result;
+                Comp SelectedComp = response.Content.ReadAsAsync<Comp>().Result;
                 return View(SelectedComp);
             }
             else
@@ -144,7 +144,7 @@ namespace Passionproject.Controllers
             if (response.IsSuccessStatusCode)
             {
                 //Put data into comp dto
-                CompDto SelectedComp = response.Content.ReadAsAsync<CompDto>().Result;
+                Comp SelectedComp = response.Content.ReadAsAsync<Comp>().Result;
                 return View(SelectedComp);
             }
             else
