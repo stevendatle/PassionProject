@@ -96,6 +96,7 @@ namespace Passionproject.Controllers
         }
 
         // GET: Comp/Edit/5
+        [HttpGet]
         public ActionResult Edit(int id)
         {
             string url = "compdata/findcomp/" + id;
