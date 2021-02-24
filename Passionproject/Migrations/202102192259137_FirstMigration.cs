@@ -14,9 +14,9 @@
                         ClassID = c.Int(nullable: false, identity: true),
                         ClassName = c.String(),
                         ClassSpec = c.String(),
-                        ClassPic = c.Boolean(nullable: true),
+                        ClassPic = c.Boolean(nullable: false),
                         PicExtension = c.String(),
-                        CompID = c.Int(nullable: true),
+                        CompID = c.Int(nullable: false),
                     })
                 .PrimaryKey(t => t.ClassID)
                 .ForeignKey("dbo.Comps", t => t.CompID, cascadeDelete: true)
