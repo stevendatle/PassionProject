@@ -160,7 +160,7 @@ namespace Passionproject.Controllers
         [ValidateAntiForgeryToken()]
         public ActionResult Delete(int id)
         {
-            string url = "compdata/deletecomp/" + id;
+            string url = "compdata/delete/" + id;
             HttpContent content = new StringContent("");
             HttpResponseMessage response = client.PostAsync(url, content).Result;
 

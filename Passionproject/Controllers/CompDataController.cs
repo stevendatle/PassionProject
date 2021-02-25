@@ -84,7 +84,7 @@ namespace Passionproject.Controllers
         /// 
 
         [HttpGet]
-        [ResponseType(typeof(CompDto))]
+        [ResponseType(typeof(Comp))]
         public IHttpActionResult FindComp(int id)
         {
             //Finding the data
@@ -96,7 +96,7 @@ namespace Passionproject.Controllers
             }
 
             //put into dto
-            CompDto CompDto = new CompDto
+            Comp CompDto = new Comp
             {
                 CompID = Comp.CompID,
                 CompName = Comp.CompName,
@@ -178,7 +178,7 @@ namespace Passionproject.Controllers
         /// <param name="id"></param>
         /// <returns></returns>
         // DELETE: api/Comps/5
-        [ResponseType(typeof(Comp))]
+        [HttpPost]
         public IHttpActionResult DeleteComp(int id)
         {
             Comp Comp = db.Comps.Find(id);

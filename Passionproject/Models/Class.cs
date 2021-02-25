@@ -23,7 +23,8 @@ namespace Passionproject.Models
         public string PicExtension { get; set; }
 
         //A class can play for multiple comps
-
+        [ForeignKey("Comp")]
+        public int CompID { get; set; }
         public virtual Comp Comp { get; set; }
 
 
@@ -42,6 +43,7 @@ namespace Passionproject.Models
         public bool ClassPic { get; set; }
 
         public string PicExtension { get; set; }
+
 
         public int CompID { get; set; }
     }
