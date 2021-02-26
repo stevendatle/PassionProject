@@ -81,7 +81,7 @@ namespace Passionproject.Controllers
         /// </summary>
         /// <param name="id"></param
         /// <returns>Information about the comp</returns>
-        /// 
+        /// GET Request to api/CompData/FindComp/(id)
 
         [HttpGet]
         [ResponseType(typeof(Comp))]
@@ -104,7 +104,7 @@ namespace Passionproject.Controllers
                 CompClass2 = Comp.CompClass2,
                 CompClass3 = Comp.CompClass3
             };
-
+            Debug.WriteLine(Comp);
             //pass along data
             return Ok(CompDto);
         }

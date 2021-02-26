@@ -54,16 +54,19 @@ namespace Passionproject.Controllers
         {
             // ShowComp ViewModel = new ShowComp();
             string url = "compdata/findcomp/" + id;
+           
             HttpResponseMessage response = client.GetAsync(url).Result;
             //Catch the status code
             if (response.IsSuccessStatusCode)
             {
                 //add data into comp data transfer object
                 Comp SelectedComp = response.Content.ReadAsAsync<Comp>().Result;
+                Debug.WriteLine(SelectedComp.CompName);
                 //  ViewModel.comp = SelectedComp;
                 url = "teamdata/getclassesforcomp/" + id;
+                return View(SelectedComp);
             }
-            return View();
+            return RedirectToAction("List");
         }
 
         // GET: Comp/Create

@@ -14,42 +14,87 @@ namespace Passionproject.Controllers
 {
     public class ClassDataController : ApiController
     {
+        //connection to DB
         private WowDbContext db = new WowDbContext();
 
+        /// <summary>
+        /// Gets a list of classes that are in the database
+        /// </summary>
+        /// <returns>List of classes</returns>
         // GET: api/ClassData
-        public IQueryable<Class> GetClasses()
+        [ResponseType(typeof(IEnumerable<Class>))]
+        public IHttpActionResult GetClasses()
         {
-            return db.Classes;
+            List<Class> Classes = db.Classes.ToList();
+            List<ClassDto> ClassDtos = new List<ClassDto> { };
+
+            //choosing information to be shown
+            foreach (var Class in Classes)
+            {
+                ClassDto NewClass = new ClassDto
+                {
+                    ClassID = Class.ClassID,
+                    ClassName = Class.ClassName,
+                    ClassPic = Class.ClassPic
+                };
+                ClassDtos.Add(NewClass);
+            }
+
+            return Ok(ClassDtos);
         }
 
-        // GET: api/ClassData/5
+        /// <summary>
+        /// Find a class in the database using its ID
+        /// </summary>
+        /// <param name="id">2</param>
+        /// <returns>Returns the class with an id of 2</returns>
+
+        // PUT: api/ClassData/5
+        [HttpGet]
         [ResponseType(typeof(Class))]
-        public IHttpActionResult GetClass(int id)
+        public IHttpActionResult FindClass(int id)
         {
-            Class @class = db.Classes.Find(id);
-            if (@class == null)
+            //Getting data from DB
+            Class Class = db.Classes.Find(id);
+            //returns 404 if not found
+            if (Class == null)
             {
                 return NotFound();
             }
 
-            return Ok(@class);
+            //DTO
+            Class ClassDto = new Class
+            {
+                ClassID = Class.ClassID,
+                ClassName = Class.ClassName,
+                ClassPic = Class.ClassPic,
+            };
+
+            return Ok(ClassDto);
+          
+           
         }
 
-        // PUT: api/ClassData/5
+        /// <summary>
+        /// Update a class in the database
+        /// </summary>
+        /// <param name="id"></param>
+        /// <returns></returns>
         [ResponseType(typeof(void))]
-        public IHttpActionResult PutClass(int id, Class @class)
+        [HttpPost]
+        public IHttpActionResult UpdateClass(int id, [FromBody] Class Class)
         {
             if (!ModelState.IsValid)
             {
                 return BadRequest(ModelState);
             }
 
-            if (id != @class.ClassID)
+            if (id != Class.ClassID)
             {
                 return BadRequest();
             }
 
-            db.Entry(@class).State = EntityState.Modified;
+            db.Entry(Class).State = EntityState.Modified;
 
             try
             {
@@ -70,23 +115,14 @@ namespace Passionproject.Controllers
             return StatusCode(HttpStatusCode.NoContent);
         }
 
-        // POST: api/ClassData
-        [ResponseType(typeof(Class))]
-        public IHttpActionResult PostClass(Class @class)
-        {
-            if (!ModelState.IsValid)
-            {
-                return BadRequest(ModelState);
-            }
+        /// <summary>
+        /// Delete a class from the database
+        /// </summary>
+        /// <param name="id"></param>
+        /// <returns></returns>
 
-            db.Classes.Add(@class);
-            db.SaveChanges();
-
-            return CreatedAtRoute("DefaultApi", new { id = @class.ClassID }, @class);
-        }
-
-        // DELETE: api/ClassData/5
-        [ResponseType(typeof(Class))]
+       
+        [ResponseType(typeof(void))]
         public IHttpActionResult DeleteClass(int id)
         {
             Class @class = db.Classes.Find(id);
@@ -99,6 +135,24 @@ namespace Passionproject.Controllers
             db.SaveChanges();
 
             return Ok(@class);
+        }
+
+        /// <summary>
+        /// Add a class to the database
+        /// </summary>
+        /// <param name="disposing"></param>
+        [ResponseType(typeof(Class))]
+        public IHttpActionResult AddClass ([FromBody]Class Class)
+        {
+            if (!ModelState.IsValid)
+            {
+                return BadRequest(ModelState);
+            }
+
+            db.Classes.Add(Class);
+            db.SaveChanges();
+
+            return Ok(Class.ClassID);
         }
 
         protected override void Dispose(bool disposing)
