@@ -72,62 +72,105 @@ namespace Passionproject.Controllers
 
         // POST: Class/Create
         [HttpPost]
-        public ActionResult Create(FormCollection collection)
+        public ActionResult Create(Class ClassInfo)
         {
-            try
-            {
-                // TODO: Add insert logic here
+            Debug.WriteLine(ClassInfo.ClassName);
+            string url = "Classdata/addClass";
+            Debug.WriteLine(jss.Serialize(ClassInfo));
+            HttpContent content = new StringContent(jss.Serialize(ClassInfo));
+            content.Headers.ContentType = new MediaTypeHeaderValue("application/json");
+            HttpResponseMessage response = client.PostAsync(url, content).Result;
 
-                return RedirectToAction("Index");
-            }
-            catch
+            if (response.IsSuccessStatusCode)
             {
-                return View();
+                int Classid = response.Content.ReadAsAsync<int>().Result;
+                return RedirectToAction("Details", new { id = Classid });
+            }
+            else
+            {
+                return RedirectToAction("Error");
             }
         }
 
         // GET: Class/Edit/5
         public ActionResult Edit(int id)
         {
-            return View();
+            string url = "classdata/findclass/" + id;
+            HttpResponseMessage response = client.GetAsync(url).Result;
+
+            if (response.IsSuccessStatusCode)
+            {
+                //Put data into comp DTO
+                Class SelectedClass = response.Content.ReadAsAsync<Class>().Result;
+                return View(SelectedClass);
+            }
+            else
+            {
+                return RedirectToAction("Error");
+            }
         }
 
         // POST: Class/Edit/5
         [HttpPost]
-        public ActionResult Edit(int id, FormCollection collection)
+        [ValidateAntiForgeryToken()]
+        public ActionResult Edit(int id, Class ClassInfo)
         {
-            try
-            {
-                // TODO: Add update logic here
+            Debug.WriteLine(ClassInfo.ClassName);
+            string url = "classdata/updateclass/" + id;
+            Debug.WriteLine(jss.Serialize(ClassInfo));
+            HttpContent content = new StringContent(jss.Serialize(ClassInfo));
+            content.Headers.ContentType = new MediaTypeHeaderValue("application/json");
+            HttpResponseMessage response = client.PostAsync(url, content).Result;
 
-                return RedirectToAction("Index");
-            }
-            catch
+            if (response.IsSuccessStatusCode)
             {
-                return View();
+                return RedirectToAction("Details", new { id = id });
+            }
+            else
+            {
+                return RedirectToAction("Error");
             }
         }
 
         // GET: Class/Delete/5
-        public ActionResult Delete(int id)
+        public ActionResult DeleteConfirm(int id)
         {
-            return View();
+            string url = "classdata/findclass/" + id;
+            HttpResponseMessage response = client.GetAsync(url).Result;
+
+            if (response.IsSuccessStatusCode)
+            {
+                //Put data into comp dto
+                Class SelectedClass = response.Content.ReadAsAsync<Class>().Result;
+                return View(SelectedClass);
+            }
+            else
+            {
+                return RedirectToAction("Error");
+            }
         }
 
         // POST: Class/Delete/5
         [HttpPost]
-        public ActionResult Delete(int id, FormCollection collection)
+        [ValidateAntiForgeryToken()]
+        public ActionResult Delete(int id)
         {
-            try
-            {
-                // TODO: Add delete logic here
+            string url = "classdata/delete/" + id;
+            HttpContent content = new StringContent("");
+            HttpResponseMessage response = client.PostAsync(url, content).Result;
 
-                return RedirectToAction("Index");
-            }
-            catch
+            if (response.IsSuccessStatusCode)
             {
-                return View();
+                return RedirectToAction("List");
             }
+            else
+            {
+                return RedirectToAction("Error");
+            }
+        }
+        public ActionResult Error()
+        {
+            return View();
         }
     }
 }
